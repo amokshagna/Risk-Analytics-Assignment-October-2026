@@ -1,8 +1,9 @@
 # Risk Analytics Course Assignment (21CSE449T)
 ### SRM Institute of Science and Technology
 **College of Engineering and Technology | School of Computing**  
-**Department of Data Science and Business Systems**  
-**Programme & Branch:** B.Tech – CSE (Big Data Analytics & Data Science)  
+**Department of Data Science and Business Systems**
+**Submitted by Mokshagna Alaparthi**
+**Programme & Branch:** B.Tech – CSE (Data Science)  
 **Academic Year:** 2026–27 (ODD) | **Faculty In-Charge:** Dr. V. Prasanna
 
 ---
