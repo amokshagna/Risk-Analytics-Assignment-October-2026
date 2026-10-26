@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analytics Assignment Dashboard | SRMIST 21CSE449T</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0b2545;
+            --primary-light: #134074;
+            --accent: #0096d6;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 40px 5%;
+            box-shadow: 0 4px 20px rgba(11, 37, 69, 0.15);
+        }
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(0, 150, 214, 0.25);
+            border: 1px solid var(--accent);
+            color: #7dd3fc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .subhead {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+        .meta-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .meta-strip strong { color: white; }
+        
+        main {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { color: var(--primary-light); }
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 28px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-tag {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .tag-critical { background: #fee2e2; color: #dc2626; }
+        .tag-success { background: #dcfce7; color: #16a34a; }
+        .tag-info { background: #e0f2fe; color: #0284c7; }
+        
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .kpi-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .kpi-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .kpi-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.88rem;
+        }
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) td { background: #f8fafc; }
+        tr:hover td { background: #f1f5f9; }
+        
+        .file-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--text-dark);
+            margin: 4px 4px 4px 0;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .file-pill:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        img.preview-img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin: 15px 0;
+        }
+        
+        .code-block {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 18px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <span class="badge">SRM Institute of Science and Technology</span>
+        <h1>Risk Analytics (21CSE449T) – Complete Assignment Dashboard</h1>
+        <p class="subhead">Academic Year 2026–27 (ODD) | Faculty: Dr. V. Prasanna | Department of Data Science and Business Systems</p>
+        <div class="meta-strip">
+            <div><strong>Programme:</strong> B.Tech CSE (BDA & DS)</div>
+            <div><strong>Case Company (Unit 1):</strong> One97 Communications Ltd (Paytm)</div>
+            <div><strong>Scorecard Standard (Unit 2):</strong> Naeem Siddiqi (*Credit Risk Scorecards*)</div>
+            <div><strong>Status:</strong> 100% Complete & Validated</div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="openTab('tab-overview')">Overview & Architecture</button>
+        <button class="tab-btn" onclick="openTab('tab-u1-t1')">Unit 1 - Task 1: Paytm Risk Register</button>
+        <button class="tab-btn" onclick="openTab('tab-u1-t2')">Unit 1 - Task 2: Tool Exploration (PPT)</button>
+        <button class="tab-btn" onclick="openTab('tab-u2-t1')">Unit 2 - Task 1a: Credit Scorecard Modeling</button>
+        <button class="tab-btn" onclick="openTab('tab-u2-t2')">Unit 2 - Task 2: RBI ICAAP vs Basel III</button>
+    </nav>
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="tab-pane active">
+        <div class="kpi-row">
+            <div class="kpi-box">
+                <div class="kpi-val">15</div>
+                <div class="kpi-label">Paytm Risks Evaluated</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">10 Slides</div>
+                <div class="kpi-label">CRQ Tool Exploration PPT</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">44.00%</div>
+                <div class="kpi-label">Scorecard KS Statistic</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">10 Gaps</div>
+                <div class="kpi-label">RBI ICAAP vs Basel III</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">
+                    Unit 1: Risk Introduction and Impacts
+                    <span class="card-tag tag-info">Completed</span>
+                </div>
+                <p><strong>Task 1: Enterprise Risk Mitigation Plan (Paytm / One97)</strong><br/>
+                Analyzed statutory filings post-RBI Section 35A directions on PPBL. Formulated 15 detailed risks, 5x5 heatmap, and 4-pillar mitigation architecture.</p>
+                <div style="margin-top: 15px;">
+                    <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_1_Risk_Register/Paytm_Risk_Register_and_Management_Plan.pdf" target="_blank">📄 5-Page PDF Report</a>
+                    <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_1_Risk_Register/Paytm_Risk_Register_and_Management_Plan.docx">📘 Word DOCX</a>
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border);">
+                <p><strong>Task 2: Tool Exploration (OpenFAIR vs. RiskLens vs. LogicManager)</strong><br/>
+                Benchmarked open-source vs. commercial cyber risk quantification across Cost, Features, Scalability, Reporting, and Compliance.</p>
+                <div style="margin-top: 15px;">
+                    <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_2_Tool_Exploration/Risk_Analytics_Tools_Comparison.pptx">📊 10-Slide PPTX</a>
+                    <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_2_Tool_Exploration/Tool_Exploration_Comparative_Table.pdf" target="_blank">📄 Comparative Table PDF</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    Unit 2: Banking Sector (Option 1a Chosen)
+                    <span class="card-tag tag-success">Completed</span>
+                </div>
+                <p><strong>Task 1a: Credit Scorecard Modeling (Naeem Siddiqi Framework)</strong><br/>
+                Developed logistic regression application scorecard on Kaggle German Credit dataset. Performed WOE/IV binning, scaling (PDO=20, Target 600 at 50:1 odds), and quantified PD, LGD, EAD, and Expected Loss.</p>
+                <div style="margin-top: 15px;">
+                    <a class="file-pill" href="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/credit_scorecard_modeling.ipynb" target="_blank">📓 Jupyter Notebook</a>
+                    <a class="file-pill" href="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/Credit_Risk_Scorecard_Report.pdf" target="_blank">📄 Model Report PDF</a>
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border);">
+                <p><strong>Task 2: Regulatory Gap Analysis (Research Paper Critique)</strong><br/>
+                Conducted deep critique of RBI's ICAAP Master Circular vs. BCBS Basel III, isolating 10 structural gaps including CET1 gold-plating (+100 bps), SLR carve-outs (FALLCR), and incurred vs. ECL loss models.</p>
+                <div style="margin-top: 15px;">
+                    <a class="file-pill" href="Unit_2_Banking_Sector/Task_2_Regulatory_Gap_Analysis/RBI_ICAAP_vs_Basel_III_Gap_Analysis.pdf" target="_blank">📄 Strict 2-Page Research Paper PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNIT 1 TASK 1 -->
+    <div id="tab-u1-t1" class="tab-pane">
+        <div class="card" style="margin-bottom: 25px;">
+            <div class="card-title">
+                Paytm Enterprise Risk Heat Map (Likelihood x Impact Matrix)
+                <span class="card-tag tag-critical">15 Key Risks Mapped</span>
+            </div>
+            <p>5x5 severity matrix mapping of One97 Communications Limited (Paytm) risks post-RBI Section 35A action.</p>
+            <img class="preview-img" src="Unit_1_Risk_Introduction_and_Impacts/Task_1_Risk_Register/risk_heatmap.png" alt="Paytm Risk Heatmap">
+            <div style="margin-top: 10px;">
+                <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_1_Risk_Register/Paytm_Risk_Register_and_Management_Plan.pdf" target="_blank">View Complete 5-Page PDF</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNIT 1 TASK 2 -->
+    <div id="tab-u1-t2" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                Risk Analytics Tool Exploration: 5-Parameter Synthesis Matrix
+                <span class="card-tag tag-info">10 Slides PPT Generated</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>OpenFAIR (Open-Source)</th>
+                        <th>RiskLens (Commercial CRQ)</th>
+                        <th>LogicManager (Integrated GRC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Cost & TCO</strong></td>
+                        <td>$0 license fee; high internal quant engineering cost. (Rating: 5/5)</td>
+                        <td>$50k–$250k/yr enterprise SaaS; rapid cyber ROI. (Rating: 2/5)</td>
+                        <td>$25k–$120k/yr subscription; amortized across units. (Rating: 3/5)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Features & Modeling</strong></td>
+                        <td>Pure Monte Carlo, Beta-PERT, full parameter control. (Rating: 4/5)</td>
+                        <td>FAIR Enterprise, empirical loss tables, control ROI. (Rating: 5/5)</td>
+                        <td>Qualitative scoring, risk matrices, incident workflows. (Rating: 3/5)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Scalability & APIs</strong></td>
+                        <td>Local Python/R runtime; manual API scripting. (Rating: 2/5)</td>
+                        <td>Cloud microservices, ServiceNow/Splunk APIs. (Rating: 4/5)</td>
+                        <td>Unlimited users, graph relational GRC database. (Rating: 5/5)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Reporting & Output</strong></td>
+                        <td>Statistical histograms, CDF/PDF curves. (Rating: 2/5)</td>
+                        <td>Dollarized ALE, Loss Exceedance Curves, Board decks. (Rating: 5/5)</td>
+                        <td>Heatmaps, compliance radar, deficiency tracking. (Rating: 4/5)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Compliance & Audit</strong></td>
+                        <td>O-RA standard compliant; manual audit logging. (Rating: 3/5)</td>
+                        <td>SEC Item 106, DORA, Basel Pillar 2. (Rating: 5/5)</td>
+                        <td>SOX 404, ISO 31000, ISO 27001, COSO, HIPAA, GDPR. (Rating: 5/5)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                <a class="file-pill" href="Unit_1_Risk_Introduction_and_Impacts/Task_2_Tool_Exploration/Risk_Analytics_Tools_Comparison.pptx">Download PowerPoint Presentation (.pptx)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNIT 2 TASK 1a -->
+    <div id="tab-u2-t1" class="tab-pane">
+        <div class="kpi-row">
+            <div class="kpi-box">
+                <div class="kpi-val">0.7765</div>
+                <div class="kpi-label">Validation ROC-AUC</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">0.5529</div>
+                <div class="kpi-label">Validation Gini</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">44.00%</div>
+                <div class="kpi-label">Test KS Statistic (>40%)</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val">€463,047</div>
+                <div class="kpi-label">Portfolio Expected Loss</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">ROC Discrimination Curve</div>
+                <img class="preview-img" src="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/scorecard_output/roc_curve.png" alt="ROC Curve">
+            </div>
+            <div class="card">
+                <div class="card-title">Kolmogorov-Smirnov (KS) Separation</div>
+                <img class="preview-img" src="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/scorecard_output/ks_plot.png" alt="KS Curve">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                Portfolio Expected Loss (EL = PD x LGD x EAD) by Rating Grade
+                <span class="card-tag tag-success">Strict Monotonic Separation</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rating Grade</th>
+                        <th>Loan Count</th>
+                        <th>Observed Default %</th>
+                        <th>Avg Score</th>
+                        <th>Avg PD %</th>
+                        <th>Total EAD (€)</th>
+                        <th>Total Expected Loss (€)</th>
+                        <th>EL % of EAD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Grade F (Subprime)</strong></td>
+                        <td>147</td>
+                        <td>68.03%</td>
+                        <td>681.8</td>
+                        <td>72.43%</td>
+                        <td>€766,077.00</td>
+                        <td>€233,612.58</td>
+                        <td>30.49%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grade D (Speculative)</strong></td>
+                        <td>229</td>
+                        <td>50.66%</td>
+                        <td>716.2</td>
+                        <td>45.77%</td>
+                        <td>€832,236.00</td>
+                        <td>€142,185.16</td>
+                        <td>17.08%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grade C (Moderate)</strong></td>
+                        <td>159</td>
+                        <td>25.79%</td>
+                        <td>740.7</td>
+                        <td>26.59%</td>
+                        <td>€476,081.00</td>
+                        <td>€47,822.75</td>
+                        <td>10.05%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grade B (Acceptable)</strong></td>
+                        <td>166</td>
+                        <td>14.46%</td>
+                        <td>760.7</td>
+                        <td>15.41%</td>
+                        <td>€462,474.00</td>
+                        <td>€25,005.46</td>
+                        <td>5.41%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grade A (Prime)</strong></td>
+                        <td>162</td>
+                        <td>9.26%</td>
+                        <td>782.5</td>
+                        <td>7.92%</td>
+                        <td>€404,513.00</td>
+                        <td>€11,348.49</td>
+                        <td>2.81%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grade AAA (Super Prime)</strong></td>
+                        <td>137</td>
+                        <td>2.92%</td>
+                        <td>814.2</td>
+                        <td>2.99%</td>
+                        <td>€329,877.00</td>
+                        <td>€3,072.59</td>
+                        <td>0.93%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                <a class="file-pill" href="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/credit_scorecard_modeling.ipynb" target="_blank">Open Jupyter Notebook (.ipynb)</a>
+                <a class="file-pill" href="Unit_2_Banking_Sector/Task_1a_Credit_Scorecard/Credit_Risk_Scorecard_Report.pdf" target="_blank">View Scorecard Report PDF</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNIT 2 TASK 2 -->
+    <div id="tab-u2-t2" class="tab-pane">
+        <div class="card">
+            <div class="card-title">
+                10 Foundational Differences: RBI ICAAP Guidelines vs. Basel III
+                <span class="card-tag tag-info">Strict 2-Page Research Paper</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Dimension</th>
+                        <th>Basel III Global Standards</th>
+                        <th>RBI ICAAP Guidelines</th>
+                        <th>Macroprudential Rationale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Minimum CET1 Ratio</strong></td>
+                        <td>4.5% of RWAs</td>
+                        <td><strong>5.5% of RWAs (+100 bps)</strong></td>
+                        <td>Loss-absorption against emerging market cyclicality.</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>Minimum Tier 1 Capital</strong></td>
+                        <td>6.0% of RWAs</td>
+                        <td><strong>7.0% of RWAs (+100 bps)</strong></td>
+                        <td>Ensures high-quality going-concern equity base.</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>Minimum Total Capital (CRAR)</strong></td>
+                        <td>8.0% of RWAs</td>
+                        <td><strong>9.0% of RWAs (11.5% with CCB)</strong></td>
+                        <td>Pillar 1 super-equivalent baseline for Indian banks.</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>Capital Conservation Buffer</strong></td>
+                        <td>2.5% phased 2016-19</td>
+                        <td>2.5% with COVID-19 deferrals</td>
+                        <td>Preserved credit delivery during pandemic shock.</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><strong>Countercyclical Buffer (CCCB)</strong></td>
+                        <td>0% to 2.5% activated on Credit/GDP gap</td>
+                        <td>Maintained at 0% (targeted hikes used)</td>
+                        <td>Avoided penalizing structural financial deepening.</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><strong>Sovereign Debt Risk Weights</strong></td>
+                        <td>Rating-linked (non-zero for sub-investment)</td>
+                        <td><strong>0% on Central & State (SDL) Debt</strong></td>
+                        <td>Maintains seamless sovereign borrowing & SLR pre-emption.</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><strong>Liquidity Coverage (LCR) & SLR</strong></td>
+                        <td>HQLA strictly cash & central bank reserves</td>
+                        <td>Carves out SLR via FALLCR & MSF</td>
+                        <td>Harmonizes legacy 18% SLR with Basel LCR norms.</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><strong>Loan Provisioning Model</strong></td>
+                        <td>IFRS 9 Expected Credit Loss (3 stages)</td>
+                        <td>Incurred Loss with 90-day formulaic norms</td>
+                        <td>Supervisory formula prevents subjective under-provisioning.</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><strong>IRRBB Capital Treatment</strong></td>
+                        <td>Pillar 2 supervisory outlier test (+/-200 bps)</td>
+                        <td>Mandatory Pillar 2 capital add-on under ICAAP</td>
+                        <td>Protects heavy fixed-rate government bond holdings.</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><strong>D-SIB Surcharges & Board Oversight</strong></td>
+                        <td>National discretion; principle-based</td>
+                        <td>Explicit surcharges: SBI (+0.8%), HDFC (+0.4%)</td>
+                        <td>Enforces board accountability and mitigates moral hazard.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 15px;">
+                <a class="file-pill" href="Unit_2_Banking_Sector/Task_2_Regulatory_Gap_Analysis/RBI_ICAAP_vs_Basel_III_Gap_Analysis.pdf" target="_blank">View 2-Page Research Paper PDF</a>
+                <a class="file-pill" href="Unit_2_Banking_Sector/Task_2_Regulatory_Gap_Analysis/RBI_ICAAP_vs_Basel_III_Gap_Analysis.docx">Download Word DOCX</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

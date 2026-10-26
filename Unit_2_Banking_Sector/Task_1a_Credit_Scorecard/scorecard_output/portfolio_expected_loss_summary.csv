@@ -1,0 +1,7 @@
+Credit_Rating,Loan_Count,Observed_Defaults,Observed_Default_Rate,Average_Score,Average_PD,Average_LGD,Total_EAD,Total_Expected_Loss,EL_as_Pct_of_EAD
+Grade F (High Risk / Subprime),147,100,68.03,681.8,72.43,39.12,766077.0,233612.58,30.49
+Grade D (Vulnerable / Speculative),229,116,50.66,716.2,45.77,36.24,832236.0,142185.16,17.08
+Grade C (Moderate Risk),159,41,25.79,740.7,26.59,35.57,476081.0,47822.75,10.05
+Grade B (Acceptable / Investment Grade),166,24,14.46,760.7,15.41,34.67,462474.0,25005.46,5.41
+Grade A (Prime / Low Risk),162,15,9.26,782.5,7.92,34.07,404513.0,11348.49,2.81
+Grade AAA (Super Prime / Pristine),137,4,2.92,814.2,2.99,32.15,329877.0,3072.59,0.93
